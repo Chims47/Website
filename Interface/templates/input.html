@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input - Medical Website</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* Full-page background image with transparent overlay */
+        body {
+            position: relative;
+        margin: 0;
+        height: 100vh;
+        overflow: auto; /* Enable scroll bar */
+        
+        
+        }
+
+        /* Background image styling */
+        body::before {
+            content: "";
+        background: url('/static/images/Input_BG.png') no-repeat center center fixed;
+        background-size: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.5; /* Adjust transparency here (0.1 to 1) */
+        z-index: -1;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.85); /* Semi-transparent white background */
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        margin-top: 50px;
+        max-width: 800px;
+        max-height: 80vh; /* Set maximum height */
+        overflow-y: auto; /* Enable vertical scrolling within the container */
+        }
+
+        h1 {
+            color: #333;
+            font-size: 1.8em;
+            text-align: center;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .btn-primary {
+            background-color: #88cde0;
+            color: #fff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background-color: #ddd;
+            color: #333;
+            border: none;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1050;
+        }
+        
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #88cde0;">
+        <a class="navbar-brand" href="/">
+            <img src="{{ url_for('static', filename='images/LogoWeb.png') }}" alt="Logo" style="height: 80px;">
+            No Stroke Zone
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </nav>
+
+    <div class="container mt-4">
+        <h1>Submit Your Medical Details</h1>
+        <form action="/input" method="POST" class="mt-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="age">Age</label>
+                        <input type="number" class="form-control" id="age" name="age" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <div class="d-flex">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="gender_male" name="gender" value="male" required>
+                                <label class="form-check-label" for="gender_male">Male</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="gender_female" name="gender" value="female" required>
+                                <label class="form-check-label" for="gender_female">Female</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="gender_other" name="gender" value="other" required>
+                                <label class="form-check-label" for="gender_other">Other</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Marital Status</label>
+                        <div class="d-flex">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="marital_status_yes" name="marital_status" value="Yes" required>
+                                <label class="form-check-label" for="marital_status_yes">Yes</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="marital_status_no" name="marital_status" value="No" required>
+                                <label class="form-check-label" for="marital_status_no">No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health Info -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Hypertension</label>
+                        <div class="d-flex">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="hypertension_yes" name="hypertension" value="yes" required>
+                                <label class="form-check-label" for="hypertension_yes">Yes</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="hypertension_no" name="hypertension" value="no" required>
+                                <label class="form-check-label" for="hypertension_no">No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Heart Disease</label>
+                        <div class="d-flex">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="heart_disease_yes" name="heart_disease" value="yes" required>
+                                <label class="form-check-label" for="heart_disease_yes">Yes</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="heart_disease_no" name="heart_disease" value="no" required>
+                                <label class="form-check-label" for="heart_disease_no">No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Info -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="avg_glucose">Average Glucose Level</label>
+                        <input type="number" step=".01" class="form-control" id="avg_glucose" name="avg_glucose" required>
+                    </div>
+                </div>
+               
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="bmi">BMI</label>
+                        <input type="number" step=".01" class="form-control" id="bmi" name="bmi" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lifestyle Info -->
+            <div class="form-group">
+                <label>Residence Type</label>
+                <div class="d-flex">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="residence_type_urban" name="residence_type" value="urban" required>
+                        <label class="form-check-label" for="residence_type_urban">Urban</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="residence_type_rural" name="residence_type" value="rural" required>
+                        <label class="form-check-label" for="residence_type_rural">Rural</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Smoking Status</label>
+                <div class="d-flex flex-wrap">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="smoking_status_no" name="smoking_status" value="never smoked" required>
+                        <label class="form-check-label" for="smoking_status_no">Never Smoked</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="smoking_status_unknown" name="smoking_status" value="Unknown" required>
+                        <label class="form-check-label" for="smoking_status_unknown">I'd rather not tell</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="smoking_status_formerly" name="smoking_status" value="formerly smoked" required>
+                        <label class="form-check-label" for="smoking_status_formerly">Formerly Smoked</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="smoking_status_smokes" name="smoking_status" value="smokes" required>
+                        <label class="form-check-label" for="smoking_status_smokes">Currently Smoking</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Work Type -->
+            <div class="form-group">
+                <label>Work Type</label>
+                <div class="d-flex flex-wrap">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="work_type_private" name="work_type" value="Private" required>
+                        <label class="form-check-label" for="work_type_private">Private</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="work_type_government" name="work_type" value="Govt_job" required>
+                        <label class="form-check-label" for="work_type_government">Government</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="work_type_children" name="work_type" value="children" required>
+                        <label class="form-check-label" for="work_type_children">Children</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="work_type_self_employed" name="work_type" value="Self-employed" required>
+                        <label class="form-check-label" for="work_type_self_employed">Self-Employed</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group text-center mt-4">
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="reset" class="btn btn-secondary">Clear</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

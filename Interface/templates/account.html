@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Account - Medical Website</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #88cde0;">
+        <a class="navbar-brand" href="/">No Stroke Zone</a>
+    </nav>
+
+    <div class="container mt-5">
+        <h1>Your Account Details</h1>
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <!-- Add more user details as needed -->
+        <div class="text-center mt-4">
+            <a href="/logout" class="btn btn-danger">Logout</a>
+        </div>
+    </div>
+</body>
+</html>
