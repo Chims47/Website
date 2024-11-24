@@ -1,14 +1,20 @@
 import pickle
-from flask import Flask, render_template, request, redirect, url_for, flash
 import joblib
-import pandas as pd
+import pandas as pd 
 import sqlite3
 import warnings
+from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, render_template, request, redirect, url_for, flash
 
 warnings.filterwarnings('ignore')
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Required for session management
+
+# Configure SQLite database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
 # Load the stroke prediction model
 model = joblib.load("stroke_model.pkl")
@@ -16,19 +22,61 @@ model = joblib.load("stroke_model.pkl")
 # Check the type of the loaded model
 print("Loaded model type:", type(model))
 
-# Initialize the SQLite database
-def init_db():
-    conn = sqlite3.connect('users.db')
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
-        )
-    ''')
-    conn.commit()
-    conn.close()
+class User(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
+
+    # Relationship to StrokeInput
+    stroke_inputs = db.relationship('StrokeInput', backref='user', lazy=True)
+
+    def __repr__(self):
+        return f'<User {self.username}>'
+    
+class Contact(db.Model):
+    __tablename__ = 'contact'
+    id = db.Column(db.Integer, primary_key=True)
+    contact = db.Column(db.String, nullable=False, unique=True)
+    email = db.Column(db.String, nullable=False)
+    message = db.Column(db.String, nullable=False)
+    name = db.Column(db.String, nullable=False, unique=True)
+
+    def __repr__(self):
+        return f'<Contact id={self.id} email={self.email}>' 
+
+class StrokeInput(db.Model):
+    __tablename__ = 'stroke_inputs'
+    id = db.Column(db.Integer, primary_key=True)
+    age = db.Column(db.Float, nullable=False)
+    hypertension = db.Column(db.Boolean, nullable=False)
+    heart_disease = db.Column(db.Boolean, nullable=False)
+    avg_glucose = db.Column(db.Float, nullable=False)
+    bmi = db.Column(db.Float, nullable=False)
+    smoking_status = db.Column(db.String(50), nullable=False)
+    marital_status = db.Column(db.String(50), nullable=False)
+    work_type = db.Column(db.String(50), nullable=False)
+
+    # Foreign key linking to the User table
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    def __repr__(self):
+        return f'<StrokeInput ID {self.id}, User {self.user_id}>'
+
+
+# # Initialize the SQLite database
+# def init_db():
+#     conn = sqlite3.connect('users.db')
+#     cursor = conn.cursor()
+#     cursor.execute('''
+#         CREATE TABLE IF NOT EXISTS users (
+#             id INTEGER PRIMARY KEY AUTOINCREMENT,
+#             username TEXT UNIQUE NOT NULL,
+#             password TEXT NOT NULL
+#         )
+#     ''')
+#     conn.commit()
+#     conn.close()
 
 # Home page
 @app.route('/')
@@ -122,17 +170,14 @@ def signup():
         username = request.form['username']
         password = request.form['password']
 
-        conn = sqlite3.connect('users.db')
-        cursor = conn.cursor()
+        new_user = User(username=username, password=password)
         try:
-            cursor.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, password))
-            conn.commit()
-            flash('Signup successful! You can now log in.', 'success')
-            return redirect(url_for('login'))
-        except sqlite3.IntegrityError:
-            flash('Username already exists. Please choose another one.', 'danger')
-        finally:
-            conn.close()
+            db.session.add(new_user)  # Add the user to the database session
+            db.session.commit()  # Commit the transaction
+            return "Signup successful!"
+        except Exception as e:
+            db.session.rollback()  # Rollback the transaction if there's an error
+            return f"Error: {e}"
 
     return render_template('signup.html')
 
@@ -147,11 +192,28 @@ def info():
     return render_template('info.html')
 
 # Contact Us page
-@app.route('/contact')
+@app.route('/contact', methods = ['GET', 'POST'])
 def contact():
+    if request.method == 'POST':
+        # Retrieve data from the frontend
+        name = request.form.get('name')
+        message = request.form.get('message')
+        email = request.form.get('email')
+
+        add_contact = Contact(name=name, message=message, email=email)
+        try:
+            db.session.add(add_contact)  # Add the user to the database session
+            db.session.commit()  # Commit the transaction
+            return "add successful!"
+        except Exception as e:
+            db.session.rollback()  # Rollback the transaction if there's an error
+            return f"Error: {e}"
+
     return render_template('contact.html')
 
 # Run the Flask app
 if __name__ == '__main__':
-    init_db()  # Initialize the database
+    with app.app_context():
+        db.create_all()  # Creates all tables defined in your models
+
     app.run(debug=True)
