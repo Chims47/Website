@@ -37,10 +37,9 @@ class User(db.Model):
 class Contact(db.Model):
     __tablename__ = 'contact'
     id = db.Column(db.Integer, primary_key=True)
-    contact = db.Column(db.String, nullable=False, unique=True)
-    email = db.Column(db.String, nullable=False)
-    message = db.Column(db.String, nullable=False)
-    name = db.Column(db.String, nullable=False, unique=True)
+    email = db.Column(db.String)
+    message = db.Column(db.String)
+    name = db.Column(db.String)
 
     def __repr__(self):
         return f'<Contact id={self.id} email={self.email}>' 
@@ -204,16 +203,21 @@ def contact():
         try:
             db.session.add(add_contact)  # Add the user to the database session
             db.session.commit()  # Commit the transaction
-            return "add successful!"
+            return redirect(url_for('contact_success'))
         except Exception as e:
             db.session.rollback()  # Rollback the transaction if there's an error
             return f"Error: {e}"
 
     return render_template('contact.html')
 
+@app.route('/contact/success')
+def contact_success():
+    return render_template('contact_success.html')  # This is the success page
+
 # Run the Flask app
 if __name__ == '__main__':
     with app.app_context():
+        db.drop_all()
         db.create_all()  # Creates all tables defined in your models
 
     app.run(debug=True)
