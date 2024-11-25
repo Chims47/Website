@@ -1,10 +1,11 @@
 import pickle
 import joblib
+from datetime import datetime
 import pandas as pd 
 import sqlite3
 import warnings
 from flask_sqlalchemy import SQLAlchemy
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash , session
 
 warnings.filterwarnings('ignore')
 
@@ -27,9 +28,10 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(),nullable=False)
 
     # Relationship to StrokeInput
-    stroke_inputs = db.relationship('StrokeInput', backref='user', lazy=True)
+    stroke_inputs = db.relationship('StrokeInput', backref='users', lazy=True)
 
     def __repr__(self):
         return f'<User {self.username}>'
@@ -37,10 +39,9 @@ class User(db.Model):
 class Contact(db.Model):
     __tablename__ = 'contact'
     id = db.Column(db.Integer, primary_key=True)
-    contact = db.Column(db.String, nullable=False, unique=True)
-    email = db.Column(db.String, nullable=False)
-    message = db.Column(db.String, nullable=False)
-    name = db.Column(db.String, nullable=False, unique=True)
+    email = db.Column(db.String)
+    message = db.Column(db.String)
+    name = db.Column(db.String)
 
     def __repr__(self):
         return f'<Contact id={self.id} email={self.email}>' 
@@ -56,7 +57,10 @@ class StrokeInput(db.Model):
     smoking_status = db.Column(db.String(50), nullable=False)
     marital_status = db.Column(db.String(50), nullable=False)
     work_type = db.Column(db.String(50), nullable=False)
-
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    stroke_prediction = db.Column(db.String(20))
+    stroke_percentage = db.Column(db.String(20))
+    gender = db.Column(db.String())
     # Foreign key linking to the User table
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
@@ -125,6 +129,34 @@ def input():
             stroke_prediction = f"Error in prediction: {e}"
             stroke_percentage = None  # In case of error, don't show percentage
 
+        # Get user_id from session
+        user_id = session.get('user_id')
+
+        if user_id:
+            # Create a new StrokeInput record linked to the logged-in user
+            new_stroke_input = StrokeInput(
+                age=age,
+                hypertension=hypertension_value,
+                heart_disease=heart_disease_value,
+                avg_glucose=avg_glucose,
+                bmi=bmi,
+                smoking_status=smoking_status,
+                marital_status=marital_status,
+                work_type=work_type,
+                stroke_prediction = stroke_prediction,
+                stroke_percentage = stroke_percentage,
+                user_id=user_id,  # Link the input data to the logged-in user
+                gender=gender
+            )
+
+            # Save the new StrokeInput to the database
+            try:
+                db.session.add(new_stroke_input)
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()  # Rollback in case of an error
+                flash(f"Error saving stroke input: {e}", "danger")
+
         # Pass the collected data and prediction to the result page
         return render_template('result.html',
                                name=name,
@@ -139,29 +171,38 @@ def input():
                                smoking_status=smoking_status,
                                work_type=work_type,
                                stroke_prediction=stroke_prediction,
-                               stroke_percentage=stroke_percentage)  # Add the percentage to the result page
+                               stroke_percentage=stroke_percentage)
 
     return render_template('input.html')
 
-# Login page
+
+@app.route('/input/explain') #explain variables
+def explain():
+    return render_template('explain.html')
+
+#Login Page
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
 
-        conn = sqlite3.connect('users.db')
-        cursor = conn.cursor()
-        cursor.execute('SELECT password FROM users WHERE username = ?', (username,))
-        user = cursor.fetchone()
-        conn.close()
-
-        if user and user[0] == password:  # In a real app, use hashed passwords
-            return redirect(url_for('home'))
+        user = User.query.filter_by(username=username).first()
+        if user and user.password == password:  # Replace with hashed password for security
+            session['user_id'] = user.id  # Store user ID in the session
+            session['username'] = user.username  # Store username in the session
+            return redirect(url_for('account'))
         else:
-            flash('Invalid username or password', 'danger')
+            return redirect(url_for('login_error'))
+            #flash('Invalid username or password', 'danger')
 
     return render_template('login.html')
+
+#Login Not Ok
+@app.route('/login/error')
+def login_error():
+    message = request.args.get('message', "An unknown error occurred.")
+    return render_template('login_error.html', message=message)
 
 # Signup page
 @app.route('/signup', methods=['GET', 'POST'])
@@ -169,17 +210,51 @@ def signup():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        email = request.form['email']
 
-        new_user = User(username=username, password=password)
+        new_user = User(username=username, password=password, email = email)
         try:
-            db.session.add(new_user)  # Add the user to the database session
+            db.session.add(new_user)  # Add the user to the data    base session
             db.session.commit()  # Commit the transaction
-            return "Signup successful!"
+            return redirect(url_for('signup_success'))
         except Exception as e:
             db.session.rollback()  # Rollback the transaction if there's an error
-            return f"Error: {e}"
+            error_message = str(e)
+            return redirect(url_for('signup_error',message=error_message))
 
     return render_template('signup.html')
+
+@app.route('/signup/error')
+def signup_error():
+    message = request.args.get('message', "An unknown error occurred.")
+    return render_template('signup_error.html', message=message)
+
+@app.route('/signup/success')
+def signup_success():
+    return render_template('signup_success.html')  # This is the success page
+
+@app.route('/account')
+def account():
+    # Retrieve user ID from the session
+    user_id = session.get('user_id')
+    
+    if user_id: 
+        user = User.query.get(user_id)  # Fetch the user from the database using the user_id
+        if user:
+            stroke_inputs = StrokeInput.query.filter_by(user_id=user_id).all()
+            return render_template('account.html', user=user,stroke_inputs=stroke_inputs)  # Pass the user to the template
+        else:
+            flash("User not found", "danger")
+            return redirect(url_for('login'))
+    else:
+        return redirect(url_for('login'))  # Redirect to login if no user is found in session
+
+
+@app.route('/logout')
+def logout():
+    # Clear the session or token that tracks the user login
+    session.clear()  # or another logout method depending on your implementation
+    return redirect(url_for('home'))  # Redirect to login page after logout
 
 # About Us page
 @app.route('/about')
@@ -204,16 +279,22 @@ def contact():
         try:
             db.session.add(add_contact)  # Add the user to the database session
             db.session.commit()  # Commit the transaction
-            return "add successful!"
+            return redirect(url_for('contact_success'))
         except Exception as e:
             db.session.rollback()  # Rollback the transaction if there's an error
             return f"Error: {e}"
 
     return render_template('contact.html')
 
+@app.route('/contact/success')
+def contact_success():
+    return render_template('contact_success.html')  # This is the success page
+
+
 # Run the Flask app
 if __name__ == '__main__':
     with app.app_context():
+        #db.drop_all() #Remove all the table saved before just delete the #
         db.create_all()  # Creates all tables defined in your models
 
     app.run(debug=True)

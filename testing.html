@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Account - Medical Website</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Your Account Information</h2>
+        
+        <!-- Display User Information -->
+        <table class="table table-bordered">
+            <tr>
+                <th>Username</th>
+                <td>{{ user.username }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ user.email }}</td>
+            </tr>
+            <tr>
+                <th>Age</th>
+                <td>{{ user.age }}</td>
+            </tr>
+            <tr>
+                <th>Gender</th>
+                <td>{{ user.gender }}</td>
+            </tr>
+            <tr>
+                <th>Hypertension</th>
+                <td>{{ 'Yes' if user.hypertension else 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Heart Disease</th>
+                <td>{{ 'Yes' if user.heart_disease else 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Average Glucose</th>
+                <td>{{ user.avg_glucose }}</td>
+            </tr>
+            <tr>
+                <th>BMI</th>
+                <td>{{ user.bmi }}</td>
+            </tr>
+            <tr>
+                <th>Marital Status</th>
+                <td>{{ user.marital_status }}</td>
+            </tr>
+            <tr>
+                <th>Residence Type</th>
+                <td>{{ user.residence_type }}</td>
+            </tr>
+            <tr>
+                <th>Smoking Status</th>
+                <td>{{ user.smoking_status }}</td>
+            </tr>
+            <tr>
+                <th>Work Type</th>
+                <td>{{ user.work_type }}</td>
+            </tr>
+            <tr>
+                <th>Stroke Prediction</th>
+                <td>{{ 'Predicted' if user.stroke_prediction else 'Not Predicted' }}</td>
+            </tr>
+            <tr>
+                <th>Stroke Prediction Percentage</th>
+                <td>{{ user.stroke_percentage }}%</td>
+            </tr>
+        </table>
+
+        <!-- Button to go back to home or other pages -->
+        <a href="/" class="btn btn-primary">Back to Home</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

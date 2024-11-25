@@ -5,19 +5,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Account - Medical Website</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .account-info {
+            margin-top: 50px;
+        }
+        .card {
+            margin-bottom: 20px;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #88cde0;">
-        <a class="navbar-brand" href="/">No Stroke Zone</a>
-    </nav>
-
-    <div class="container mt-5">
-        <h1>Your Account Details</h1>
-        <p><strong>Username:</strong> {{ user.username }}</p>
-        <!-- Add more user details as needed -->
-        <div class="text-center mt-4">
-            <a href="/logout" class="btn btn-danger">Logout</a>
+    <div class="container account-info">
+            <a href="/" class="btn btn-primary">Back to Home</a>
+        <h2 class="text-center">Your Account Information</h2>
+        
+        <!-- User Information -->
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4>Personal Details</h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Username</th>
+                        <td>{{ user.username }}</td>
+                    </tr>
+                    <tr>
+                        <th>Email</th>
+                        <td>{{ user.email }}</td>
+                    </tr>
+                    <tr>
+                    <tr>
+                        <th>Gender</th>
+                        {% for input in user.stroke_inputs %}
+                        <td>{{ input.gender }}</td>
+                        {% endfor %}
+                    </tr>
+                    
+                </table>
+            </div>
         </div>
-    </div>
+        <!-- Stroke History -->
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4>Your Stroke Prediction History</h4>
+            </div>
+            <div class="card-body">
+                {% if user.stroke_inputs %}
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Age</th>
+                                <th>BMI</th>
+                                <th>Average Glucose Level</th>
+                                <th>Smoking Status</th>
+                                <th>Hypertension</th>
+                                <th>Heart Disease</th>
+                                <th>Work Type</th>
+                                <th>Stroke Prediction</th>
+                                <th>Prediction Probability</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for input in user.stroke_inputs %}
+                                <tr>
+                                    <td>{{ input.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                    <td>{{ input.age }}</td>
+                                    <td>{{input.bmi}}</td>
+                                    <td>{{input.avg_glucose}}</td>
+                                    <td>{{input.smoking_status}}</td>
+                                    <td>{{ 'Yes' if input.hypertension else 'No' }}</td>
+                                    <td>{{ 'Yes' if input.heart_disease else 'No' }}</td>
+                                    <td>{{input.work_type}}</td>
+                                    <td>{{ 'Predicted' if input.stroke_prediction else 'Not Predicted' }}</td>
+                                    <td>{{ input.stroke_percentage }}%</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>No stroke prediction history available.</p>
+                {% endif %}
+            </div>
+        </div>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

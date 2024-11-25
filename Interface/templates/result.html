@@ -203,18 +203,15 @@
 
         <!-- Stroke Prediction Section (Separate Box) -->
         <div class="stroke-section {% if stroke_prediction == 'Yes' %}stroke-yes{% else %}stroke-no{% endif %}">
-            <h2>Stroke Prediction</h2>
-            <div class="circular-chart">
-                <p>{% if stroke_prediction == 'Yes' %}Yes{% else %}No{% endif %}</p>
-            </div>
+            <h2>Stroke Prediction</h2>  
             <p>This is your estimated risk based on health data.</p>
-            {% if stroke_percentage is not none %}
+            {% if stroke_percentage is not none %}  
                 <p><strong>Risk of Stroke:</strong> {{ stroke_percentage|round(2) }}%</p>
             {% endif %}
         </div>
 
         <div class="text-center mt-4">
-            <a href="/input" class="btn btn-primary btn-lg">Back to Input</a>
+            <a href="/" class="btn btn-primary btn-lg">Back to Home</a>
         </div>
     </div>
 
