@@ -97,8 +97,11 @@
         </button>
     </nav>
 
-    <div class="container mt-4">
-        <h1>Submit Your Medical Details</h1>
+
+
+    <div class="container mt-4">    
+        <a href="{{ url_for('home') }}" class="btn btn-primary">Back To Home Page?</a>
+        <h1>Submit Your Medical Details</h1>    
         <form action="/input" method="POST" class="mt-4">
             <div class="row">
                 <div class="col-md-6">
@@ -114,6 +117,7 @@
                     </div>
                 </div>
             </div>
+            
 
             <div class="row">
                 <div class="col-md-6">
@@ -261,6 +265,9 @@
                         <label class="form-check-label" for="work_type_self_employed">Self-Employed</label>
                     </div>
                 </div>
+            </div>
+            <div class="text-center">
+                <a href="{{ url_for('explain') }}" class="btn btn-primary">Need help? Click on me ;3</a>
             </div>
 
             <div class="form-group text-center mt-4">

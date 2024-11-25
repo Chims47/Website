@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding Health Indicators</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+    <style>
+        body {
+            background: linear-gradient(to right, #e6f7ff, #ffffff);
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            background-color: #88cde0 !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: white !important;
+        }
+
+        .btn-primary {
+            background-color: #88cde0;
+            color: #020202;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .doctor-bg {
+            background: url('/static/images/Doctor.png') no-repeat center center;
+            background-size: cover;  /* Ensures the image covers the entire area */
+            height: 60vh;  /* Full height of the viewport */
+            border-radius: 15px;  /* Optional: Rounded corners */
+        }
+
+        /* Ensure proper spacing between columns */
+        .container-fluid {
+            padding: 2%;
+        }
+
+        .img-fluid {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Slide-in animations */
+        .slide-in-left {
+            animation: slideInLeft 1s ease-out forwards;
+        }
+
+        .slide-in-right {
+            animation: slideInRight 1s ease-out forwards;
+        }
+
+        /* Add delays for each element */
+        .fade-in-0_5s {
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+            animation-delay: 0.5s;
+        }
+
+        .fade-in-1s {
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+            animation-delay: 1s;
+        }
+
+        .fade-in-1_5s {
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+            animation-delay: 1.5s;
+        }
+
+        /* Define the keyframes for sliding in */
+        @keyframes slideInLeft {
+            0% {
+                opacity: 0;
+                transform: translateX(-100%);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            0% {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Define the keyframes for fade-in */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-secondary">
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="/">
+            <img src="{{ url_for('static', filename='images/LogoWeb.png') }}" alt="Logo" style="height: 80px;">
+            No Stroke Zone
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="/about">About Us</a></li>
+                <li class="nav-item"><a class="nav-link" href="/info">Information</a></li>
+                <li class="nav-item"><a class="nav-link" href="/contact">Contact Us</a></li>
+                <li class="nav-item">
+                    <button class="btn btn-light" data-toggle="modal" data-target="#loginModal">Login</button>
+                </li>
+                <li class="nav-item ml-2">
+                    <button class="btn btn-secondary" data-toggle="modal" data-target="#signupModal">Sign Up</button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8 text-center">Understanding Health Indicators</h1>
+    <div class="text-center">
+        <a href="{{ url_for('input') }}" class="btn btn-primary">Back to the Submit Your Medical Details?</a>
+    </div><br>
+    <!-- Grid Layout -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Heart Disease Card -->
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <div class="flex items-center gap-2 text-red-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 21C12 21 7 17 5 12C3.67 7.37 6.41 4 9 4C10.38 4 11.62 5.12 12 6.28C12.38 5.12 13.62 4 15 4C17.59 4 20.33 7.37 19 12C17 17 12 21 12 21Z"></path>
+                </svg>
+                <span>Heart Disease</span>
+            </div>
+            <div>
+                <h3 class="font-semibold mb-2">Common Symptoms:</h3>
+                <ul class="list-disc list-inside space-y-2">
+                    <li>Chest pain or discomfort</li>
+                    <li>Shortness of breath</li>
+                    <li>Pain in the neck, jaw, throat, upper belly, or back</li>
+                    <li>Fatigue</li>
+                    <li>Irregular heartbeat</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Hypertension Card -->
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <div class="flex items-center gap-2 text-blue-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M2 12C2 6.48 5.48 2 9 2C12.52 2 16 5.48 16 9C16 12.52 12.52 16 9 16C5.48 16 2 12.52 2 9ZM9 11H7V7H9V11ZM9 13H7V15H9V13Z"></path>
+                </svg>
+                <span>Hypertension (High Blood Pressure)</span>
+            </div>
+            <div>
+                <h3 class="font-semibold mb-2">Common Symptoms:</h3>
+                <ul class="list-disc list-inside space-y-2">
+                    <li>Severe headaches</li>
+                    <li>Nosebleeds</li>
+                    <li>Fatigue or confusion</li>
+                    <li>Vision problems</li>
+                    <li>Difficulty breathing</li>
+                </ul>
+                <p class="mt-4">Normal blood pressure: Less than 120/80 mmHg</p>
+            </div>
+        </div>
+
+        <!-- BMI Card -->
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <div class="flex items-center gap-2 text-green-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L12 6M12 6L6 12M12 6L18 12M12 6L12 18M12 18L18 12M12 18L6 12"></path>
+                </svg>
+                <span>Body Mass Index (BMI)</span>
+            </div>
+            <div>
+                <h3 class="font-semibold mb-2">How to Calculate:</h3>
+                <p class="mb-4">BMI = weight(kg) / [height(m)]²</p>
+
+                <h3 class="font-semibold mb-2">BMI Categories:</h3>
+                <ul class="list-disc list-inside space-y-2">
+                    <li>Underweight: Less than 18.5</li>
+                    <li>Normal weight: 18.5-24.9</li>
+                    <li>Overweight: 25-29.9</li>
+                    <li>Obesity: 30 or greater</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Residence Type Card -->
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <div class="flex items-center gap-2 text-purple-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M2 12L12 2L22 12H18V22H6V12H2Z"></path>
+                </svg>
+                <span>Residence Type</span>
+            </div>
+            <div>
+                <p class="mb-4">Your living environment can impact your health:</p>
+                <ul class="list-disc list-inside space-y-2">
+                    <li><strong>Urban:</strong> City living, typically with better access to healthcare but potentially more stress and pollution</li>
+                    <li><strong>Rural:</strong> Countryside living, often with cleaner air but might have limited access to immediate healthcare</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Smoking Status Card -->
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <div class="flex items-center gap-2 text-orange-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M8 4H4V20H8M8 4H12M8 4V8"></path>
+                </svg>
+                <span>Smoking Status</span>
+            </div>
+            <div>
+                <h3 class="font-semibold mb-2">Categories:</h3>
+                <ul class="list-disc list-inside space-y-2">
+                    <li><strong>Never Smoked:</strong> No history of smoking</li>
+                    <li><strong>Former Smoker:</strong> Quit smoking for at least one year</li>
+                    <li><strong>Current Smoker:</strong> Currently smoking or quit less than one year ago</li>
+                </ul>
+                <p class="mt-4">Smoking significantly increases stroke risk</p>
+            </div>
+        </div>
+
+        <!-- Work Type Card -->
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <div class="flex items-center gap-2 text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 12L12 21L21 12L12 3L3 12Z"></path>
+                </svg>
+                <span>Work Type</span>
+            </div>
+            <div>
+                <h3 class="font-semibold mb-2">Categories and Health Implications:</h3>
+                <ul class="list-disc list-inside space-y-2">
+                    <li><strong>Private:</strong> Various stress levels depending on position</li>
+                    <li><strong>Self-employed:</strong> Flexible schedule but potential financial stress</li>
+                    <li><strong>Government:</strong> Generally stable work environment</li>
+                    <li><strong>Student:</strong> Academic stress but typically more active lifestyle</li>
+                    <li><strong>Retired:</strong> Less work stress but important to maintain activity</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Average Glucose Level -->
+    <div class="mt-8 bg-white p-6 rounded-lg shadow">
+        <h2 class="text-xl font-bold mb-4">Average Glucose Level</h2>
+        <p class="mb-4">Normal blood glucose levels vary throughout the day:</p>
+        <ul class="list-disc list-inside space-y-2">
+            <li><strong>Fasting (before meals):</strong> 70-99 mg/dL</li>
+            <li><strong>2 hours after meals:</strong> Less than 140 mg/dL</li>
+            <li><strong>Random check:</strong> Less than 200 mg/dL</li>
+        </ul>
+        <p class="mt-4 text-sm text-gray-600">Note: Consistently high glucose levels may indicate diabetes, which increases stroke risk.</p>
+    </div>
+</div>
+<div class="text-center">
+    <a href="{{ url_for('input') }}" class="btn btn-primary">Back to the Submit Your Medical Details?</a>
+</div>
+</body>
+</html>
